@@ -1,3 +1,4 @@
+#for missqt
 from ntgcalls import ConnectionError
 from ntgcalls import ConnectionNotFound
 
@@ -9,17 +10,13 @@ class RequestBroadcastTimestamp(Scaffold):
         self,
         chat_id: int,
     ):
-        # noinspection PyBroadException
-        try:
-            time = await self._app.get_stream_timestamp(
-                chat_id,
-            )
-        except Exception:
-            time = 0
+        # Low-request musicbot mode:
+        # Do not query Telegram for live/broadcast stream timestamps. Normal
+        # outbound musicbot audio/video playback does not need this feature.
         try:
             await self._binding.send_broadcast_timestamp(
                 chat_id,
-                time,
+                0,
             )
         except (ConnectionError, ConnectionNotFound):
             pass
