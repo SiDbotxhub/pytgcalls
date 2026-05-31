@@ -1,3 +1,4 @@
+#for missqt
 import logging
 
 from ntgcalls import MediaState
@@ -24,7 +25,6 @@ class UpdateStatus(Scaffold):
                 self._last_group_call_status = {}
             if self._last_group_call_status.get(chat_id) == status_key:
                 return
-            self._last_group_call_status[chat_id] = status_key
 
             await self._app.set_call_status(
                 chat_id,
@@ -34,5 +34,6 @@ class UpdateStatus(Scaffold):
                 state.presentation_paused,
                 peer,
             )
+            self._last_group_call_status[chat_id] = status_key
         except Exception as e:
             py_logger.debug(f'SetVideoCallStatus: {e}')
