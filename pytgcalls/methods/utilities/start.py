@@ -1,5 +1,7 @@
+#for missqt
 import asyncio
 import logging
+import os
 
 from ...exceptions import PyTgCallsAlreadyRunning
 from ...pytgcalls_session import PyTgCallsSession
@@ -22,12 +24,22 @@ class Start(Scaffold):
                 self._my_id,
             )
             if self._app.no_updates:
-                py_logger.warning(
-                    f'Using {self._app.package_name.capitalize()} '
-                    'client in no_updates mode is not recommended. '
-                    'This mode may cause unexpected behavior or '
-                    'limitations.',
+                message = (
+                    f'Using {self._app.package_name.capitalize()} client '
+                    'with no_updates=True is blocked in MissQT low-request '
+                    'musicbot mode. Set assistant/client no_updates=False. '
+                    'If you intentionally want to bypass this guard, set '
+                    'PYTGCALLS_ALLOW_NO_UPDATES=1.'
                 )
+                if os.getenv('PYTGCALLS_ALLOW_NO_UPDATES', '0').lower() not in (
+                    '1',
+                    'true',
+                    'yes',
+                    'on',
+                ):
+                    self._is_running = False
+                    raise RuntimeError(message)
+                py_logger.warning(message)
             else:
                 self._handle_mtproto()
 
