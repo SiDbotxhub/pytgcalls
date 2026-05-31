@@ -409,8 +409,13 @@ class PyrogramClient(BridgedClient):
         self,
         chat_id: int,
     ):
+        # Low-request musicbot mode:
+        # Use only cached participants from GetGroupCall/MTProto updates.
+        # Do not issue explicit GetGroupParticipants requests just for
+        # incoming source scans or optional participant-list helpers.
         return await self._cache.get_participant_list(
             chat_id,
+            True,
         )
 
     async def get_participants(
