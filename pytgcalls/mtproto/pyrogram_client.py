@@ -1,3 +1,4 @@
+#for missqt
 import json
 from typing import Dict
 from typing import List
@@ -410,9 +411,8 @@ class PyrogramClient(BridgedClient):
         chat_id: int,
     ):
         # Low-request musicbot mode:
-        # Use only cached participants from GetGroupCall/MTProto updates.
-        # Do not issue explicit GetGroupParticipants requests just for
-        # incoming source scans or optional participant-list helpers.
+        # Return cached participants only. This prevents optional helpers
+        # from issuing fresh GetGroupParticipants requests during playback.
         return await self._cache.get_participant_list(
             chat_id,
             True,
