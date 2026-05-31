@@ -1,3 +1,4 @@
+#for missqt
 from ntgcalls import ConnectionError
 from ntgcalls import ConnectionNotFound
 from ntgcalls import MediaSegmentStatus
@@ -12,31 +13,18 @@ class RequestBroadcastPart(Scaffold):
         chat_id: int,
         part_request: SegmentPartRequest,
     ):
-        part_status = MediaSegmentStatus.NOT_READY
-        # noinspection PyBroadException
-        try:
-            part = await self._app.download_stream(
-                chat_id,
-                part_request.timestamp,
-                part_request.limit,
-                part_request.channel_id
-                if part_request.channel_id > 0 else None,
-                part_request.quality,
-            )
-            if part is not None:
-                part_status = MediaSegmentStatus.SUCCESS
-        except Exception:
-            part = None
-            part_status = MediaSegmentStatus.RESYNC_NEEDED
-
+        # Low-request musicbot mode:
+        # Music bots that only send local audio/video into group calls do not
+        # need Telegram live/broadcast stream receive. Avoid download_stream(),
+        # which can call upload.GetFile and media DC auth requests.
         try:
             await self._binding.send_broadcast_part(
                 chat_id,
                 part_request.segment_id,
                 part_request.part_id,
-                part_status,
+                MediaSegmentStatus.NOT_READY,
                 part_request.quality_update,
-                part,
+                None,
             )
         except (ConnectionError, ConnectionNotFound):
             pass
