@@ -1,3 +1,4 @@
+#for missqt
 from typing import Union
 
 from ...scaffold import Scaffold
@@ -9,7 +10,7 @@ class UpdateSources(Scaffold):
         chat_id: Union[int, str],
     ):
         # Low-request musicbot mode:
-        # Normal outbound audio/video playback does not need to scan other
-        # participants for incoming camera/presentation sources.
-        # Skipping this avoids extra GetGroupParticipants requests.
+        # This bot only sends outbound audio/video to group calls.
+        # Incoming camera/screen-share source discovery is intentionally
+        # skipped to avoid extra GetGroupParticipants requests on play/switch.
         return
